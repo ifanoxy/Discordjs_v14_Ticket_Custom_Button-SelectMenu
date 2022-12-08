@@ -56,7 +56,7 @@ const IfaBot = new IfanoxyBot()
  * ButtonStyle.Success --> Green
 */
 
-Put your code here
+// Put your code here
 
 IfaBot.login(config.token)
 .catch(e => console.log(e))
