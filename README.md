@@ -47,3 +47,18 @@ Select_MenuTicket
 > **You are entitled to 5 "lines"**
 > 1 lines can contain **5 Buttons** or **1 Select Menu**
 > so you can have 25 buttons or 5 select menu or 2 select menu and 15 buttons. 
+
+# How run it ?
+
+```
+npm install 
+```
+insert your bot's token in the 'config.json' file
+```
+node index.js
+```
+And it's done ! Your bot is online
+
+
+> **Note**
+> the next update will add the functionality of a custom embed
