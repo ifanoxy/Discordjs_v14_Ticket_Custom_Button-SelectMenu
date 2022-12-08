@@ -12,6 +12,8 @@ const IfaBot = new IfanoxyBot()
  * ButtonStyle.Success --> Green
 */
 
+//Put your ticket code here !
+
 
 
 IfaBot.login(config.token)
