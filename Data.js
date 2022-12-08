@@ -1,6 +1,327 @@
-import{ActionRowBuilder as e,ButtonBuilder as t,ButtonStyle as n,ChannelType as a,Client as s,Collection as i,EmbedBuilder as o,PermissionsBitField as r,SelectMenuBuilder as l,SlashCommandBuilder as m}from"discord.js";import*as d from"fs";import*as c from"colors";export class IfanoxyBot extends s{constructor(){super({intents:4609}),this.commands=new i,this.on("interactionCreate",async(s,i)=>{switch(!0){case s.isChatInputCommand():{let l=this.commands.get(s.commandName);if(!l)return s.reply("Il y a un probl\xe8me avec cette commande ! Elle est introuvable");l.execute(s,i)}break;case s.isButton():{if("Ticket_Delete"==s.customId){let m=s.guild.channels.cache.get(s.channelId);s.reply({content:"Fermeture du ticket..."}).then(()=>{m.delete().catch(e=>{console.log(e)})});break}let d=s.customId.split("_"),c=d[0],u=d[1];var p=s.guild.channels.cache.filter(e=>e.type==a.GuildCategory).map(e=>e);let h;for(let g of p)if(g.name==u){h=g;break}void 0==h&&(h=s.guild.channels.create({name:u,type:a.GuildCategory,permissionOverwrites:[{id:s.guild.roles.everyone,deny:[r.Flags.ViewChannel]}]})),console.log("[Ticket]".magenta+` Nouveau ticket de ${s.user.tag}`.green),s.guild.channels.create({name:`${s.member.user.username}-${c}`,parent:await h,type:a.GuildText,topic:s.message.id,permissionOverwrites:[{id:s.user.id,allow:[r.Flags.SendMessages,r.Flags.ViewChannel,r.Flags.ReadMessageHistory]},{id:s.guild.roles.everyone,deny:[r.Flags.ViewChannel]},]}).then(a=>{let i=new o().setAuthor({iconURL:s.user.avatarURL(),name:`Ticket de ${s.member.user.username}`}).setDescription(`**Bien le bonjour ${s.user.username} !**
- Vous venez de cr\xe9er un ticket pour la raison **${c}**.`).setTimestamp().setColor("Navy").setFooter({text:`Ticket syst\xe8me`}),r=new e().addComponents(new t().setCustomId("Ticket_Delete").setLabel("Fermer le Ticket").setStyle(n.Danger));a.send({content:`<@!${s.user.id}>`,embeds:[i],components:[r]}),s.reply({embeds:[new o().setColor("Blurple").setDescription(`Votre ticket \xe0 \xe9t\xe9 cr\xe9\xe9 ! <#${a.id}> Il a \xe9t\xe9 cr\xe9er dans la cat\xe9gorie <#${a.parentId}>`)],ephemeral:!0})})}break;case s.isSelectMenu():{let b=s.customId.split("_"),y=s.values[0].split("_")[0],w=b[1];var p=s.guild.channels.cache.filter(e=>e.type==a.GuildCategory).map(e=>e);let f;for(let x of p)if(x.name==w){f=x;break}void 0==f&&(f=s.guild.channels.create({name:w,type:a.GuildCategory,permissionOverwrites:[{id:s.guild.roles.everyone,deny:[r.Flags.ViewChannel]}]})),console.log("[Ticket]".magenta+` Nouveau ticket de ${s.user.tag}`.green),s.guild.channels.create({name:`${s.member.user.username}-${y}`,parent:await f,type:a.GuildText,topic:s.message.id,permissionOverwrites:[{id:s.user.id,allow:[r.Flags.SendMessages,r.Flags.ViewChannel,r.Flags.ReadMessageHistory]},{id:s.guild.roles.everyone,deny:[r.Flags.ViewChannel]},]}).then(a=>{let i=new o().setAuthor({iconURL:s.user.avatarURL(),name:`Ticket de ${s.member.user.username}`}).setDescription(`**Bien le bonjour ${s.user.username} !**
- Vous venez de cr\xe9er un ticket pour la raison **${y}**.`).setTimestamp().setColor("Navy").setFooter({text:`Ticket syst\xe8me`}),r=new e().addComponents(new t().setCustomId("Ticket_Delete").setLabel("Fermer le Ticket").setStyle(n.Danger));a.send({content:`<@!${s.user.id}>`,embeds:[i],components:[r]}),s.reply({embeds:[new o().setColor("Blurple").setDescription(`Votre ticket \xe0 \xe9t\xe9 cr\xe9\xe9 ! <#${a.id}> Il a \xe9t\xe9 cr\xe9er dans la cat\xe9gorie <#${a.parentId}>`)],ephemeral:!0})})}}})}async initCommands(){let a=d.readdirSync("./dataStorage").filter(e=>e.endsWith(".json"));var s=[];for(let i of a){let r=JSON.parse(d.readFileSync(`./dataStorage/${i}`)),c=new m,u=0;var p=[];c.setName(i.replace(".json","").toString()),c.setDescription("Send Ticket message"),s.push(c.toJSON());let h={data:c,execute(a,s){let i=new o().setDescription("Vous rencontrez un probl\xe8me ?\nCr\xe9er un ticket en choisissant la bonne cat\xe9gorie !\n");for(let m of r){if(0==m.length)break;let d=new e;for(let h of m){if("Button"==h.type)null!==h.emoji.name?(d.addComponents(new t().setCustomId(`${h.label}_${c.name}_${u}`).setLabel(`${h.label}`).setStyle(n[`${h.style}`]).setEmoji({name:h.emoji.name,id:h.emoji.id,animated:h.emoji.animated})),i.setDescription(i.data.description+`
-> <:${h.emoji.name}:${h.emoji.id}> **${h.label}**`)):(d.addComponents(new t().setCustomId(`${h.label}_${c.name}_${u}`).setLabel(`${h.label}`).setStyle(n[`${String(h.style)}`]||"1")),i.setDescription(i.data.description+`
-> **${h.label}**`));else{let g=new l;g.setPlaceholder(h.placeHolder),g.setCustomId(`${h.setName}_${c.name}_${u}`);var b=h.options;b=b.map(e=>(u++,Object({label:e.label,description:e.description,value:`${e.label}_${c.name}_${u}`}))),g.addOptions(b.map(e=>e)),d.addComponents(g),i.setDescription(i.data.description+`
-> **${h.label}**`)}u++}p.push(d)}a.reply({embeds:[new o().setColor("Blurple").setDescription("Votre message pour les ticket a \xe9t\xe9 envoy\xe9 dans ce channel avec succ\xe8s !")],ephemeral:!0}),a.channel.send({embeds:[i.setTitle("Cr\xe9ateur de ticket").setColor("Orange").setThumbnail().setFooter({text:"Ticket - Creator"})],components:p})}};this.commands.set(c.name,h),console.log("[+]".green+` Ajout de la commande Ticket : ${c.name}`.cyan)}await this.application?.commands.set(s)}}export class Ticket{constructor(e){if(!e)throw Error("\x1b[31m \nTicketName is not defined! \x1b[33m \n\nexample: \nnew Ticket('Random Name')\n \x1b[0m");this.TicketName=e.toLowerCase().replace(" ","-")}rows=[[],[],[],[],[]];addButton({setName:e,style:t,emojiName:n,emojiId:a,emojiAnimated:s}){try{if(!e)throw Error("\x1b[31m \nname is not defined! \x1b[33m \n\nexample: \n.addButton({\n    setName: 'Exemple of name'\n})\n \x1b[0m");if(!t)throw Error("\x1b[31m \nstyle is not defined! \x1b[33m \n\nexample: \n.addButton({\n    style: ButtonStyle.Primary\n})\n \x1b[0m");if(5==this.rows[4].length||this.rows[4][0]&&"Select_Menu"==this.rows[4][0].type)throw Error("\x1b[31m \nYou have reached the button and select menu limit! \x1b[33m \n\nLimits: 25 Buttons or 5 SelectMenus\n \x1b[0m");for(let i of this.rows)if(!(i.length>4)){if(i[0]&&"Select_Menu"==i[0].type)continue;i.push({label:e,style:t,emoji:{name:n||null,id:a||null,animated:s||!1},type:"Button"});break}return d.existsSync("dataStorage")||d.mkdirSync("dataStorage"),d.writeFileSync("dataStorage/"+this.TicketName+".json",JSON.stringify(this.rows)),this}catch(o){console.log(o),process.exit(0)}}addSelect_Menu({setName:e,placeHolder:t,options:n=[{label,description}]}){try{if(!e)throw Error("\x1b[31m \nname is not defined! \x1b[33m \n\nexample: \n.addSelect_Menu({\n    setName: 'Exemple of name'\n})\n \x1b[0m");if(!n)throw Error("\x1b[31m \noptions is not defined! \x1b[33m \n\nexample: \n.addSelect_Menu({\n    option: [ {label: 'option 1', description: 'this is a description'} ]\n})\n \x1b[0m");if(this.rows[4].length>0)throw Error("\x1b[31m \nYou have reached the button and select menu limit! \x1b[33m \n\nLimits: 25 Buttons or 5 SelectMenus\n \x1b[0m");for(let a of this.rows)if(!(a.length>4)&&!a[0]){a.push({label:e,placeHolder:t||null,options:n,type:"Select_Menu"});break}return d.existsSync("dataStorage")||d.mkdirSync("dataStorage"),d.writeFileSync("dataStorage/"+this.TicketName+".json",JSON.stringify(this.rows)),this}catch(s){console.log(s),process.exit(0)}}}
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, Client, Collection, EmbedBuilder, PermissionsBitField, SelectMenuBuilder, SlashCommandBuilder } from 'discord.js'
+import * as fs from 'fs'
+import * as colors from 'colors'
+
+export class IfanoxyBot extends Client {
+
+    constructor() {
+        super({
+            intents: 4609,
+        })
+        this.commands = new Collection()
+        this.on("interactionCreate", async (interaction, client) => {
+            switch (true) {
+                case interaction.isChatInputCommand() : {
+                    const command = this.commands.get(interaction.commandName);
+                    if(!command) return interaction.reply('Il y a un problème avec cette commande ! Elle est introuvable');
+                    command.execute(interaction, client);
+                }
+                break;
+                case interaction.isButton() : {
+                    if(interaction.customId == "Ticket_Delete"){
+                        const chan = interaction.guild.channels.cache.get(interaction.channelId);
+                    
+                        interaction.reply({
+                          content: 'Fermeture du ticket...'
+                        })
+                        .then(() => {
+                            chan.delete().catch((err) => {console.log(err)})
+                        })
+                        break;
+                    }
+                    const CI = interaction.customId.split('_');
+                    const name = CI[0];
+                    const TicketName = CI[1];
+                    var allParent = interaction.guild.channels.cache.filter(w  => w.type == ChannelType.GuildCategory).map(x => x)
+                    let parent;
+                    for (let oneParent of allParent) {
+                        if(oneParent.name == TicketName) {
+                            parent = oneParent;
+                            break;
+                        }
+                    }
+                    if(parent == undefined) {
+                        parent = interaction.guild.channels.create({
+                            name: TicketName,
+                            type: ChannelType.GuildCategory,
+                            permissionOverwrites: [{
+                                id: interaction.guild.roles.everyone,
+                                deny: [PermissionsBitField.Flags.ViewChannel],
+                            }]
+                        })
+                    }
+                    
+                    console.log(`[Ticket]`.magenta + ` Nouveau ticket de ${interaction.user.tag}`.green)
+                    interaction.guild.channels.create({
+                        name: `${interaction.member.user.username}-${name}`,
+                        parent: await parent,
+                        type: ChannelType.GuildText,
+                        topic: interaction.message.id,
+                        permissionOverwrites: [{
+                            id: interaction.user.id,
+                            allow: [PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.ReadMessageHistory],
+                          },
+                          {
+                            id: interaction.guild.roles.everyone,
+                            deny: [PermissionsBitField.Flags.ViewChannel],
+                          },
+                        ],  
+                    })
+                    .then(channel => {
+                        const crtembed = new EmbedBuilder()
+                            .setAuthor({iconURL: interaction.user.avatarURL(), name: `Ticket de ${interaction.member.user.username}`})
+                            .setDescription(`**Bien le bonjour ${interaction.user.username} !**\n Vous venez de créer un ticket pour la raison **${name}**.`)
+                            .setTimestamp()
+                            .setColor('Navy')
+                            .setFooter({text: `Ticket système`})
+                        const sup = new ActionRowBuilder()
+                            .addComponents(
+                                new ButtonBuilder()
+                                .setCustomId('Ticket_Delete')
+                                .setLabel('Fermer le Ticket')
+                                .setStyle(ButtonStyle.Danger),
+                            )
+                        channel.send({content: `<@!${interaction.user.id}>`,embeds: [crtembed], components: [sup]})
+                        interaction.reply({embeds: [new EmbedBuilder().setColor("Blurple").setDescription(`Votre ticket à été créé ! <#${channel.id}> Il a été créer dans la catégorie <#${channel.parentId}>`)],ephemeral: true})
+                    });
+                }
+                break;
+                case interaction.isSelectMenu() : {
+                    const CI = interaction.customId.split('_');
+                    const name = interaction.values[0].split('_')[0];
+                    const TicketName = CI[1];
+                    var allParent = interaction.guild.channels.cache.filter(w  => w.type == ChannelType.GuildCategory).map(x => x)
+                    let parent;
+                    for (let oneParent of allParent) {
+                        if(oneParent.name == TicketName) {
+                            parent = oneParent;
+                            break;
+                        }
+                    }
+                    if(parent == undefined) {
+                        parent = interaction.guild.channels.create({
+                            name: TicketName,
+                            type: ChannelType.GuildCategory,
+                            permissionOverwrites: [{
+                                id: interaction.guild.roles.everyone,
+                                deny: [PermissionsBitField.Flags.ViewChannel],
+                            }]
+                        })
+                    }
+                    
+                    console.log(`[Ticket]`.magenta + ` Nouveau ticket de ${interaction.user.tag}`.green)
+                    interaction.guild.channels.create({
+                        name: `${interaction.member.user.username}-${name}`,
+                        parent: await parent,
+                        type: ChannelType.GuildText,
+                        topic: interaction.message.id,
+                        permissionOverwrites: [{
+                            id: interaction.user.id,
+                            allow: [PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.ReadMessageHistory],
+                          },
+                          {
+                            id: interaction.guild.roles.everyone,
+                            deny: [PermissionsBitField.Flags.ViewChannel],
+                          },
+                        ],  
+                    })
+                    .then(channel => {
+                        const crtembed = new EmbedBuilder()
+                            .setAuthor({iconURL: interaction.user.avatarURL(), name: `Ticket de ${interaction.member.user.username}`})
+                            .setDescription(`**Bien le bonjour ${interaction.user.username} !**\n Vous venez de créer un ticket pour la raison **${name}**.`)
+                            .setTimestamp()
+                            .setColor('Navy')
+                            .setFooter({text: `Ticket système`})
+                        const sup = new ActionRowBuilder()
+                            .addComponents(
+                                new ButtonBuilder()
+                                .setCustomId('Ticket_Delete')
+                                .setLabel('Fermer le Ticket')
+                                .setStyle(ButtonStyle.Danger),
+                            )
+                        channel.send({content: `<@!${interaction.user.id}>`,embeds: [crtembed], components: [sup]})
+                        interaction.reply({embeds: [new EmbedBuilder().setColor("Blurple").setDescription(`Votre ticket à été créé ! <#${channel.id}> Il a été créer dans la catégorie <#${channel.parentId}>`)],ephemeral: true})
+                    });
+                }
+                break;
+            }
+        })
+    }
+
+    async initCommands() {
+        const filesData = fs.readdirSync('./dataStorage').filter(f => f.endsWith('.json'))
+        var ArrayCmd = [];
+        for(const file of filesData) {
+            const data = JSON.parse(fs.readFileSync(`./dataStorage/${file}`))
+            const cmd = new SlashCommandBuilder()
+            let i = 0
+            var cmt = []
+
+            cmd.setName((file.replace('.json', '')).toString())
+            cmd.setDescription("Send Ticket message")
+
+            ArrayCmd.push(cmd.toJSON());
+            const all = {
+                data: cmd,
+                execute(interaction, client) {
+                    let embedTicket = new EmbedBuilder().setDescription('Vous rencontrez un problème ?\nCréer un ticket en choisissant la bonne catégorie !\n')
+                    for(const ActionRow of data) {
+                        if(ActionRow.length == 0)break;
+                        const row = new ActionRowBuilder()
+                        for(const Component of ActionRow) {
+                            if(Component.type == "Button"){
+                                if(Component.emoji.name !== null) {
+                                    row.addComponents(
+                                        new ButtonBuilder()
+                                        .setCustomId(`${Component.label}_${cmd.name}_${i}`)
+                                        .setLabel(`${Component.label}`)
+                                        .setStyle(ButtonStyle[`${Component.style}`])
+                                        .setEmoji({
+                                            name: Component.emoji.name,
+                                            id: Component.emoji.id,
+                                            animated: Component.emoji.animated,
+                                        })
+                                    )
+                                    embedTicket.setDescription(embedTicket.data.description + `\n> <:${Component.emoji.name}:${Component.emoji.id}> **${Component.label}**`)
+                                } else {
+                                    row.addComponents(
+                                        new ButtonBuilder()
+                                        .setCustomId(`${Component.label}_${cmd.name}_${i}`)
+                                        .setLabel(`${Component.label}`)
+                                        .setStyle(ButtonStyle[`${String(Component.style)}`] || '1')
+                                    )
+                                    embedTicket.setDescription(embedTicket.data.description + `\n> **${Component.label}**`)
+                                }
+                            } else {
+                                let SelectMenu = new SelectMenuBuilder();
+                                SelectMenu.setPlaceholder(Component.placeHolder)
+                                SelectMenu.setCustomId(`${Component.setName}_${cmd.name}_${i}`)
+                                var options = Component.options
+                                options = options.map(o => {
+                                    i++;
+                                    return new Object({label: o.label, description: o.description, value: `${o.label}_${cmd.name}_${i}`});
+                                })
+                                SelectMenu.addOptions(options.map(x => x))
+                                row.addComponents(
+                                    SelectMenu
+                                )
+                                embedTicket.setDescription(embedTicket.data.description + `\n> **${Component.label}**`)
+                            }
+                            
+                            i++;
+                        }
+                        cmt.push(row)
+                    }
+                    interaction.reply({
+                        embeds: [
+                            new EmbedBuilder()
+                            .setColor('Blurple')
+                            .setDescription('Votre message pour les ticket a été envoyé dans ce channel avec succès !')
+                        ],
+                        ephemeral: true
+                    })
+                    interaction.channel.send({
+                        embeds: [
+                            embedTicket
+                            .setTitle('Créateur de ticket')
+                            .setColor('Orange')
+                            .setThumbnail()
+                            .setFooter({text: "Ticket - Creator"})
+                        ],
+                        components: cmt
+                    })
+                }
+            }
+
+            this.commands.set(cmd.name, all)
+
+            console.log('[+]'.green + ` Ajout de la commande Ticket : ${cmd.name}`.cyan)
+
+        }
+        await this.application?.commands.set(ArrayCmd)
+    }
+}
+
+export class Ticket{
+    constructor(TicketName) {
+        if(!TicketName)throw new Error("\x1b[31m \nTicketName is not defined! \x1b[33m \n\nexample: \nnew Ticket('Random Name')\n \x1b[0m")
+        this.TicketName = TicketName.toLowerCase().replace(" ", "-")
+    }
+    rows = [new Array(),new Array(),new Array(),new Array(),new Array()]
+
+    addButton({
+        setName,
+        style,
+        emojiName,
+        emojiId,
+        emojiAnimated,
+    }) {
+        try{
+            if(!setName)throw new Error("\x1b[31m \nname is not defined! \x1b[33m \n\nexample: \n.addButton({\n    setName: 'Exemple of name'\n})\n \x1b[0m")
+            if(!style)throw new Error("\x1b[31m \nstyle is not defined! \x1b[33m \n\nexample: \n.addButton({\n    style: ButtonStyle.Primary\n})\n \x1b[0m")
+            if(this.rows[4].length == 5) throw new Error("\x1b[31m \nYou have reached the button and select menu limit! \x1b[33m \n\nLimits: 25 Buttons or 5 SelectMenus\n \x1b[0m")
+            if(this.rows[4][0]){
+                if(this.rows[4][0].type == 'Select_Menu') throw new Error("\x1b[31m \nYou have reached the button and select menu limit! \x1b[33m \n\nLimits: 25 Buttons or 5 SelectMenus\n \x1b[0m")
+            }
+
+            for (let row of this.rows){
+                if(row.length > 4)continue;
+                if(row[0]){
+                    if(row[0].type == "Select_Menu")continue;
+                }
+                row.push({
+                    label: setName,
+                    style: style,
+                    emoji: {
+                        name: emojiName || null,
+                        id: emojiId || null,
+                        animated: emojiAnimated || false,
+                    },
+                    type: "Button",
+                })
+                break;
+            }
+            if(!fs.existsSync('dataStorage')) fs.mkdirSync('dataStorage');
+            fs.writeFileSync('dataStorage/' + this.TicketName + '.json', JSON.stringify(this.rows))
+            return this;
+        } catch (e) {
+            console.log(e)
+            process.exit(0)
+        }
+    }
+    addSelect_Menu({
+        setName,
+        placeHolder,
+        options = [
+            {
+                label,
+                description,
+            }
+        ]
+    }) {
+        try {
+            if(!setName)throw new Error("\x1b[31m \nname is not defined! \x1b[33m \n\nexample: \n.addSelect_Menu({\n    setName: 'Exemple of name'\n})\n \x1b[0m");
+            if(!options)throw new Error("\x1b[31m \noptions is not defined! \x1b[33m \n\nexample: \n.addSelect_Menu({\n    option: [ {label: 'option 1', description: 'this is a description'} ]\n})\n \x1b[0m");
+            if(this.rows[4].length > 0)throw new Error("\x1b[31m \nYou have reached the button and select menu limit! \x1b[33m \n\nLimits: 25 Buttons or 5 SelectMenus\n \x1b[0m");
+            
+            for (let row of this.rows){
+                if(row.length > 4)continue;
+                if(row[0])continue;
+                row.push({
+                    label: setName,
+                    placeHolder: placeHolder || null,
+                    options: options,
+                    type: "Select_Menu",
+                })
+                break;
+            }
+            if(!fs.existsSync('dataStorage')) fs.mkdirSync('dataStorage');
+            fs.writeFileSync('dataStorage/' + this.TicketName + '.json', JSON.stringify(this.rows))
+            return this;
+
+        } catch (e) {
+            console.log(e)
+            process.exit(0)
+        }
+    }
+}
