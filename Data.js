@@ -155,7 +155,6 @@ export class IfanoxyBot extends Client {
             const data = JSON.parse(fs.readFileSync(`./dataStorage/${file}`))
             const cmd = new SlashCommandBuilder()
             let i = 0
-            var cmt = []
 
             cmd.setName((file.replace('.json', '')).toString())
             cmd.setDescription("Send Ticket message")
@@ -165,6 +164,7 @@ export class IfanoxyBot extends Client {
                 data: cmd,
                 execute(interaction, client) {
                     let embedTicket = new EmbedBuilder().setDescription('Vous rencontrez un problème ?\nCréer un ticket en choisissant la bonne catégorie !\n')
+                    var cmt = []
                     for(const ActionRow of data) {
                         if(ActionRow.length == 0)break;
                         const row = new ActionRowBuilder()
@@ -207,7 +207,6 @@ export class IfanoxyBot extends Client {
                                 )
                                 embedTicket.setDescription(embedTicket.data.description + `\n> **${Component.label}**`)
                             }
-                            
                             i++;
                         }
                         cmt.push(row)
@@ -230,6 +229,7 @@ export class IfanoxyBot extends Client {
                         ],
                         components: cmt
                     })
+                    console.log(cmt)
                 }
             }
 
